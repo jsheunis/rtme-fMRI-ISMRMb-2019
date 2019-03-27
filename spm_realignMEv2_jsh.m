@@ -14,6 +14,8 @@ for e = 1:numel(ME_fn)
     end
     
     % Data
+    spm('defaults','fmri');
+    spm_jobman('initcfg');
     realign_estimate_reslice = struct;
     realign_estimate_reslice.matlabbatch{1}.spm.spatial.realign.estwrite.data={fns'};
     % Eoptions
@@ -31,7 +33,8 @@ for e = 1:numel(ME_fn)
     realign_estimate_reslice.matlabbatch{1}.spm.spatial.realign.estwrite.roptions.mask = 1;
     realign_estimate_reslice.matlabbatch{1}.spm.spatial.realign.estwrite.roptions.prefix = 'r';
     % Run
-    cfg_util('run',realign_estimate_reslice.matlabbatch);
+    spm_jobman('run',realign_estimate_reslice.matlabbatch);
+    
     
     % Save parameters
     [dir,fn,ext] = fileparts(ME_fn{Nref});

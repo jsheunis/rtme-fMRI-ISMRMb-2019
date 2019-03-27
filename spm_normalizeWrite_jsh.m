@@ -1,5 +1,7 @@
 function spm_normalizeWrite_jsh(deformation, filenames)
 
+spm('defaults','fmri');
+spm_jobman('initcfg');
 normalize_write = struct;
 % Subject
 % Deformation field
@@ -12,5 +14,5 @@ normalize_write.matlabbatch{1}.spm.spatial.normalise.write.woptions.vox = [2,2,2
 normalize_write.matlabbatch{1}.spm.spatial.normalise.write.woptions.interp = 4;
 normalize_write.matlabbatch{1}.spm.spatial.normalise.write.woptions.prefix = 'w';
 
-cfg_util('run',normalize_write.matlabbatch);
+spm_jobman('run',normalize_write.matlabbatch);
 disp('done')

@@ -22,6 +22,8 @@ functional0_fn = f_me_fn{2};
 
 % STEP 1 -- Coregister structural image to first dynamic image (estimate only)
 disp('1 - Coregister structural image to first dynamic image (estimate only)');
+spm('defaults','fmri');
+spm_jobman('initcfg');
 coreg_estimate = struct;
 % Ref
 coreg_estimate.matlabbatch{1}.spm.spatial.coreg.estimate.ref = {[functional0_fn ',1']};
@@ -40,12 +42,14 @@ coreg_estimate.matlabbatch{1}.spm.spatial.coreg.estimate.eoptions.fwhm = [7 7];
 % coreg_estimate.matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.mask = 0;
 % coreg_estimate.matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.prefix = 'r';
 % Run
-cfg_util('run',coreg_estimate.matlabbatch);
+spm_jobman('run',coreg_estimate.matlabbatch);
 disp('Step 1 - Done!');
 
 % STEP 2 -- Segmentation of coregistered structural image into GM, WM, CSF, etc
 % (with implicit warping to MNI space, saving forward and inverse transformations)
 disp('2 - Segmenting coregistered structural image into GM, WM, CSF, etc...');
+spm('defaults','fmri');
+spm_jobman('initcfg');
 segmentation = struct;
 % Channel
 segmentation.matlabbatch{1}.spm.spatial.preproc.channel.biasreg = 0.001;
@@ -70,7 +74,7 @@ segmentation.matlabbatch{1}.spm.spatial.preproc.warp.fwhm = 0;
 segmentation.matlabbatch{1}.spm.spatial.preproc.warp.samp = 3;
 segmentation.matlabbatch{1}.spm.spatial.preproc.warp.write=[1 1];
 % Run
-cfg_util('run',segmentation.matlabbatch);
+spm_jobman('run',segmentation.matlabbatch);
 % Save filenames
 [d, fn, ext] = fileparts(structural_fn);
 output.forward_transformation = [d filesep 'y_' fn '.nii'];
@@ -85,6 +89,8 @@ disp('done');
 
 % STEP 3 -- Reslice all to functional-resolution image grid
 disp('3 - Reslice all generated images to functional-resolution image grid');
+spm('defaults','fmri');
+spm_jobman('initcfg');
 reslice = struct;
 % Ref
 reslice.matlabbatch{1}.spm.spatial.coreg.write.ref = {[functional0_fn ',1']};
@@ -101,7 +107,7 @@ reslice.matlabbatch{1}.spm.spatial.coreg.write.roptions.wrap = [0 0 0];
 reslice.matlabbatch{1}.spm.spatial.coreg.write.roptions.mask = 0;
 reslice.matlabbatch{1}.spm.spatial.coreg.write.roptions.prefix = 'r';
 % Run
-cfg_util('run',reslice.matlabbatch);
+spm_jobman('run',reslice.matlabbatch);
 % Save filenames
 output.rstructural_fn = [d filesep 'r' fn ext];
 output.rgm_fn = [d filesep 'rc1' fn '.nii'];
